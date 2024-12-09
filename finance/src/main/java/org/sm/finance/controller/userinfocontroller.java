@@ -2,6 +2,9 @@ package org.sm.finance.controller;
 
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.sm.finance.model.Userinfo;
 import org.sm.finance.service.Userinfoservice;
 import org.sm.finance.utils.exceptions.userexception;
@@ -38,21 +41,24 @@ public class userinfocontroller {
 public ResponseEntity<String> loginUser( @RequestBody Userinfo login_info )
 {
        try{
-            String login_info_email = login_info.getEmail();
+            String login_info_email = login_info.getEmail();      
             String login_info_password = login_info.getPassword();
-            boolean  login_info_response = userinfoservice.LoginUser(login_info_email, login_info_password);
-            if(login_info_response == true)
+            String token = userinfoservice.LoginUser(login_info_email, login_info_password);
+            if(token !=  null)
             {
-               return(ResponseEntity.ok("User logged in sucessfully"));
+               return(ResponseEntity.ok().body(token));
             }
             else
             {
-                  return(ResponseEntity.badRequest().body("Login failed"));
+                  return (ResponseEntity.ok().body("Login failed"));
             }
+            
             
        }
        catch(userexception e)
        {
+           
+
             return(ResponseEntity.badRequest().body(e.getMessage()));
        }
 }

@@ -1,12 +1,16 @@
 package org.sm.finance.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.sm.finance.model.Userinfo;
 import org.sm.finance.repository.Userinforepository;
 import org.sm.finance.utils.authentication.CustomUserDetails;
+import org.sm.finance.utils.authentication.Jwt;
 import org.sm.finance.utils.exceptions.userexception;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,6 +22,8 @@ public class Userinfoservice {
     private Userinforepository userinforepository;
     @Autowired
     private PasswordEncoder passwordencoder;
+    @Autowired
+    private Jwt jwt;
     public Userinfo SaveUser(Userinfo userinfo)
     {
         List<Userinfo> existinguser =  userinforepository.findByEmail(userinfo.getEmail());
@@ -34,7 +40,7 @@ public class Userinfoservice {
 
         
     }
-    public boolean LoginUser(String email,String password)
+    public String LoginUser(String email,String password)
     {
           List<Userinfo> user_in_database = userinforepository.findByEmail(email);
           if(user_in_database.size() == 0)
@@ -47,9 +53,12 @@ public class Userinfoservice {
               Userinfo userobject = user_in_database.get(0);
               String password_of_stored_user = userobject.getPassword();
               boolean login_info_response = passwordencoder.matches(password, password_of_stored_user);
+              String jwt_token = jwt.createjwttoken(email);
+              
+              
               if(login_info_response == true)
               {
-                 return(true);
+                 return(jwt_token);
               }
               else
               {
@@ -59,8 +68,9 @@ public class Userinfoservice {
     }
     public boolean unregisterUser()
     {
-
+        // For Basic Authentication using username and password
       // How Authentiction object looks like
+
       // Authentication object:UsernamePasswordAuthenticationToken [
       //   Principal=org.sm.finance.utils.authentication.CustomUserDetails@23f3a6f4, Credentials=[PROTECTED], Authenticated=true, 
       //   Details=WebAuthenticationDetails [RemoteIpAddress=0:0:0:0:0:0:0:1, SessionId=27300FA6453E4F0DD498752073C3E2F7], 
@@ -71,12 +81,15 @@ public class Userinfoservice {
       // String email = authentication.getName();
       // System.out.println(authentication.getId());
       Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+      // principal contains the authenticated userdetails
+      // typically it has fields like getPassword(),getName()
+      // so typecasting in CustomUserDetails help us to access other fields as well
 Object principal = authentication.getPrincipal();
 System.out.println(principal);
 
 
     CustomUserDetails userDetails = (CustomUserDetails) principal;
-    System.out.println("User ID: " + userDetails.getId());
+    System.out.println("User ID: " + userDetails.getId());// just for understanding
     System.out.println("Email: " + userDetails.getUsername());
 
         List<Userinfo>existing_users= userinforepository.findByEmail(userDetails.getUsername());
