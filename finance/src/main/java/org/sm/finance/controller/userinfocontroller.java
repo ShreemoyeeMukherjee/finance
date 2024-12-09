@@ -58,12 +58,12 @@ public ResponseEntity<String> loginUser( @RequestBody Userinfo login_info )
 }
 
 @DeleteMapping("/unregister-user")
-public ResponseEntity<String>unregisterUser(@RequestBody Userinfo  unregister_user_info)
+public ResponseEntity<String>unregisterUser()
 
 {
       try{
-      String unregister_user_info_email  = unregister_user_info.getEmail();
-      boolean unregister_user_response =  userinfoservice.unregisterUser(unregister_user_info_email);
+     
+      boolean unregister_user_response =  userinfoservice.unregisterUser();
 
       if(unregister_user_response == true)
       {

@@ -7,6 +7,7 @@ import org.springframework.data.annotation.CreatedDate;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+// import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,6 +26,8 @@ public class Userinfo {
     private String password;
     @CreatedDate
     private LocalDateTime createdAt;
+    // @OneToOne(mappedBy = "Portfolio")
+    // private Portfolio portfolio;
     
 } 
 

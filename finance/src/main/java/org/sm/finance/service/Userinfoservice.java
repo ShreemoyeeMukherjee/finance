@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.sm.finance.model.Userinfo;
 import org.sm.finance.repository.Userinforepository;
-
+import org.sm.finance.utils.authentication.CustomUserDetails;
 import org.sm.finance.utils.exceptions.userexception;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -55,9 +57,29 @@ public class Userinfoservice {
               }
           }
     }
-    public boolean unregisterUser(String email)
+    public boolean unregisterUser()
     {
-         List<Userinfo>existing_users= userinforepository.findByEmail(email);
+
+      // How Authentiction object looks like
+      // Authentication object:UsernamePasswordAuthenticationToken [
+      //   Principal=org.sm.finance.utils.authentication.CustomUserDetails@23f3a6f4, Credentials=[PROTECTED], Authenticated=true, 
+      //   Details=WebAuthenticationDetails [RemoteIpAddress=0:0:0:0:0:0:0:1, SessionId=27300FA6453E4F0DD498752073C3E2F7], 
+      //   Granted Authorities=[]]
+      
+      // Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+      // System.out.println("Authentication object:"+authentication);
+      // String email = authentication.getName();
+      // System.out.println(authentication.getId());
+      Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+Object principal = authentication.getPrincipal();
+System.out.println(principal);
+
+
+    CustomUserDetails userDetails = (CustomUserDetails) principal;
+    System.out.println("User ID: " + userDetails.getId());
+    System.out.println("Email: " + userDetails.getUsername());
+
+        List<Userinfo>existing_users= userinforepository.findByEmail(userDetails.getUsername());
          if(existing_users.size() == 0)
          {
              throw new userexception("user with this email not found");
