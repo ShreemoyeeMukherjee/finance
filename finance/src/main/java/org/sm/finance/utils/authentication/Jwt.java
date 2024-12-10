@@ -39,6 +39,8 @@ public class Jwt {
     
     public String validateToken(String token)
     {
+        // upon verification we will receive the payload in claims variable
+        // Claims is an interface in JJWT
         Claims claims = Jwts.parser().verifyWith(getSigningKey()).build().parseSignedClaims(token).getPayload();
         System.out.println(claims);
         

@@ -7,6 +7,7 @@ import java.util.List;
 
 
 @Repository
+// The parameter after Userinfo refers to the datatype of primary key of model
 public interface Userinforepository extends JpaRepository<Userinfo,Long> {
 List<Userinfo> findByEmail(String email);
 }

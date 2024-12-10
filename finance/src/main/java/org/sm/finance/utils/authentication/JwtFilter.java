@@ -24,6 +24,11 @@ public class JwtFilter  extends OncePerRequestFilter{
     private Jwt jwt_obj;
 
     @Override
+    // here we are extracting the header named 'Authorization' and then we are checking if it is bearer token
+    // after extracting token , it is being validated using a function validateToken()
+    // if token is  valid , we will receive the username(ie email here)and then using that we can
+    //retrieve the the user using loadByUsername()
+
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         String authorizationHeader = request.getHeader("Authorization");
         String username = null;
@@ -34,7 +39,8 @@ public class JwtFilter  extends OncePerRequestFilter{
         }
         if (username != null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            
+        
+            // here userdetails are placed in the Security Context Holder
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(auth);
